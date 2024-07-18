@@ -1,0 +1,58 @@
+{
+  "users": [
+    {
+      "id": "5",
+      "name": "Ibrohim",
+      "username": "Atxamov",
+      "group": "N58"
+    },
+    {
+      "id": "6",
+      "name": "John",
+      "username": "Doe",
+      "group": "N59"
+    },
+    {
+      "id": "7",
+      "name": "Don",
+      "username": "Smith",
+      "group": "N48"
+    },
+    {
+      "id": "8",
+      "name": "Symone",
+      "username": "Smith",
+      "group": "N60"
+    },
+    {
+      "id": "9",
+      "name": "Tom",
+      "username": "Holend",
+      "group": "N57"
+    },
+    {
+      "id": "2ec6",
+      "name": "mirmansur",
+      "username": "raxmatov",
+      "group": "N44"
+    },
+    {
+      "id": "8cf3",
+      "name": "mirmansur",
+      "username": "MIRMANSUR",
+      "group": "N58"
+    },
+    {
+      "id": "1fb8",
+      "name": "abror",
+      "username": "ID19372",
+      "group": "N58"
+    },
+    {
+      "id": "5e0b",
+      "name": "ulugbek",
+      "username": "Raxmonov",
+      "group": "N33"
+    }
+  ]
+}

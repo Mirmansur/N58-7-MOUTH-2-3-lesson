@@ -1,0 +1,35 @@
+.tableALLL {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 80px;
+  overflow: auto !important;
+  gap: 20px;
+}
+
+.td {
+  font-family: Mulish;
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.th {
+  font-family: Mulish;
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+.start {
+  display: flex;
+  padding: 30px;
+  justify-content: space-around;
+}
+.btn-allss {
+  display: flex;
+  align-items: center;
+}
