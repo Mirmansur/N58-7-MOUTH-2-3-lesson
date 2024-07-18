@@ -19,7 +19,7 @@ const Login = () => {
   };
   return (
     <div className="container">
-      <div className="logos card">
+      <div className="logos ">
         <div className="logo">
           <div className="logo-img">
             <h1>LOGIN UP</h1>
