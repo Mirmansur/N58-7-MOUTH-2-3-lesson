@@ -33,3 +33,35 @@ tr:nth-child(even) {
   display: flex;
   align-items: center;
 }
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 300px;
+  font-family: Mulish;
+  gap: 20px;
+}
+
+.login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+.login input {
+  width: 350px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none !important;
+}
+.logo-img {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.icon-person {
+  font-size: 2.3em;
+}

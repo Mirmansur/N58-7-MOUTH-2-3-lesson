@@ -11,7 +11,6 @@ import {
   DELETE_POST,
   EDIT_POST,
   SEARCH_POST,
-  FILTER_POST,
 } from "../context/postContext";
 import "../componets/Post.css";
 import StyledPost, {
@@ -21,7 +20,7 @@ import StyledPost, {
   StyledSaves,
   StyledSearch,
   StyledSelect,
-} from "../componets/StyledPost";
+} from "./StyledPost";
 
 const Post = () => {
   const {
@@ -36,8 +35,26 @@ const Post = () => {
     username: "",
     group: "",
   });
+  const [selectedGroup, setSelectedGroup] = useState("All");
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    username: "",
+    group: "",
+  });
+  const [editId, setEditId] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setIsEditing(false);
+    setEditId(null);
+    setEditFormData({
+      name: "",
+      username: "",
+      group: "",
+    });
+  };
+
   const handleShow = () => setShow(true);
 
   const fetchPosts = async () => {
@@ -61,12 +78,13 @@ const Post = () => {
   }, []);
 
   const handleDeletePost = async (postId) => {
-    confirm("Rostanam o'chirishni hohlaysizmi");
-    try {
-      await axios.delete(`http://localhost:3000/users/${postId}`);
-      dispatch({ type: DELETE_POST, payload: postId });
-    } catch (error) {
-      console.error("Error deleting post:", error);
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      try {
+        await axios.delete(`http://localhost:3000/users/${postId}`);
+        dispatch({ type: DELETE_POST, payload: postId });
+      } catch (error) {
+        console.error("Error deleting post:", error);
+      }
     }
   };
 
@@ -78,17 +96,10 @@ const Post = () => {
     dispatch({ type: SEARCH_POST, payload: searchInput });
   };
 
-  let filteredPosts = posts.filter((post) =>
-    post.name.toLowerCase().includes(searchInput.toLowerCase())
-  );
-
-  // const handleFilter = () => {
-  //   dispatch({ type: FILTER_POST, payload: filterInput });
-  // };
-
-  // let filteredPosts = posts.filter((post) =>
-  //   post.group.toLowerCase().includes(filterInput.toLowerCase())
-  // );
+  let filteredPosts = posts;
+  if (selectedGroup !== "All") {
+    filteredPosts = posts.filter((post) => post.group === selectedGroup);
+  }
 
   let list = filteredPosts.map((el) => (
     <tr key={el.id}>
@@ -96,7 +107,7 @@ const Post = () => {
       <td className="td">{el.username}</td>
       <td className="td">{el.group}</td>
       <td className="td">
-        <StyledEdit className="Edit" onClick={() => handleEditPost(el.id)}>
+        <StyledEdit className="Edit" onClick={() => handleEdit(el)}>
           ✍️
         </StyledEdit>
         <StyledDelete
@@ -117,7 +128,7 @@ const Post = () => {
     }));
   };
 
-  const hsndelSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     let user = {
       name: formData.name,
@@ -126,11 +137,45 @@ const Post = () => {
     };
     axios
       .post("http://localhost:3000/users", user)
-      .then((res) => dispatch({ type: ADD_POST, payload: res.data }));
-    setFormData(" ");
-    const handleEditPost = (postId) => {
-      dispatch({ type: EDIT_POST, payload: postId });
+      .then((res) => dispatch({ type: ADD_POST, payload: res.data }))
+      .catch((error) => console.error("Error adding post:", error));
+    setFormData({ name: "", username: "", group: "" });
+    handleClose();
+  };
+
+  const handleEdit = (post) => {
+    setEditId(post.id);
+    setEditFormData({
+      name: post.name,
+      username: post.username,
+      group: post.group,
+    });
+    setIsEditing(true);
+    handleShow();
+  };
+
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prevEditFormData) => ({
+      ...prevEditFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    let updatedPost = {
+      name: editFormData.name,
+      username: editFormData.username,
+      group: editFormData.group,
     };
+    axios
+      .put(`http://localhost:3000/users/${editId}`, updatedPost)
+      .then((res) => {
+        dispatch({ type: EDIT_POST, payload: res.data });
+        handleClose();
+      })
+      .catch((error) => console.error("Error editing post:", error));
   };
 
   return (
@@ -144,7 +189,12 @@ const Post = () => {
               value={searchInput}
               onChange={handleSearchInputChange}
             />
-            <StyledSelect name="" id="">
+            <StyledSelect
+              name="group"
+              id="group"
+              value={selectedGroup}
+              onChange={(e) => setSelectedGroup(e.target.value)}
+            >
               <option value="All">All</option>
               <option value="N58">N58</option>
               <option value="N59">N59</option>
@@ -171,18 +221,18 @@ const Post = () => {
       </div>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Add New User</Modal.Title>
+          <Modal.Title>{isEditing ? "Edit User" : "Add New User"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={hsndelSubmit}>
+          <Form onSubmit={isEditing ? handleEditSubmit : handleSubmit}>
             <Form.Group className="mb-3" controlId="formBasicName">
               <Form.Label>Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter name"
                 name="name"
-                value={formData.name}
-                onChange={handleFormChange}
+                value={isEditing ? editFormData.name : formData.name}
+                onChange={isEditing ? handleEditFormChange : handleFormChange}
               />
             </Form.Group>
 
@@ -192,23 +242,25 @@ const Post = () => {
                 type="text"
                 placeholder="Enter username"
                 name="username"
-                value={formData.username}
-                onChange={handleFormChange}
+                value={isEditing ? editFormData.username : formData.username}
+                onChange={isEditing ? handleEditFormChange : handleFormChange}
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicUsername">
+            <Form.Group className="mb-3" controlId="formBasicGroup">
               <Form.Label>Group</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter group"
                 name="group"
-                value={formData.group}
-                onChange={handleFormChange}
+                value={isEditing ? editFormData.group : formData.group}
+                onChange={isEditing ? handleEditFormChange : handleFormChange}
               />
             </Form.Group>
             <Modal.Footer className="btn-allss">
               <StyledSaves onClick={handleClose}>Close</StyledSaves>
-              <StyledSave onClick={handleClose}>Save </StyledSave>
+              <StyledSave type="submit">
+                {isEditing ? "Save Changes" : "Save"}
+              </StyledSave>
             </Modal.Footer>
           </Form>
         </Modal.Body>

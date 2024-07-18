@@ -111,3 +111,20 @@ const StyledSaves = styled.button`
 `;
 
 export { StyledSaves };
+
+const StyledLogin = styled.button`
+  font-family: Mulish;
+  background-color: #2f2fa8;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: 0.4s;
+  &:hover {
+    background-color: #f10000;
+    color: white;
+  }
+`;
+
+export { StyledLogin };
