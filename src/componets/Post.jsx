@@ -97,8 +97,16 @@ const Post = () => {
   };
 
   let filteredPosts = posts;
+  if (searchInput !== "") {
+    filteredPosts = posts.filter((post) =>
+      post.name.toLowerCase().includes(searchInput.toLowerCase())
+    );
+  }
+
   if (selectedGroup !== "All") {
-    filteredPosts = posts.filter((post) => post.group === selectedGroup);
+    filteredPosts = filteredPosts.filter(
+      (post) => post.group === selectedGroup
+    );
   }
 
   let list = filteredPosts.map((el) => (
